@@ -1,5 +1,4 @@
-from abc import ABC, abstractmethod, abstractproperty
-from typing import List, NamedTuple
+from typing import List
 from collections import namedtuple
 
 # Defaults are applied from the right
@@ -20,12 +19,12 @@ class LoggingDefinitionFactory:
 
     def get_formatter_definitions(self):
         return {
-            "{name}".format(name): {'format': format} for (name, format) in self.formatters
+            "{}".format(name): {'format': format} for (name, format) in self.formatters
         }
 
-    def get_handlers(self):
+    def get_handler_definitions(self):
         return {
-            "{name}".format(name): {
+            "{}".format(name): {
                 'level': level,
                 'formatter': formatter,
                 'class': handler_class,
@@ -33,20 +32,20 @@ class LoggingDefinitionFactory:
             } for (name, level, formatter, handler_class, stream) in self.handlers
         }
 
-    def get_loggers(self):
+    def get_logger_definitions(self):
         return {
-            "{name}".format(name): {
-                'handlers': handlers,
+            "{}".format(name): {
+                'handlers': [handler.name for handler in handlers],
                 'level': level,
                 'propagate': propagate
-            } for (name, handlers, level, propagate) in self.loggers
+            } for (name, level, propagate, handlers) in self.loggers
         }
 
     def __call__(self):
         return {
             'version': self.version,
             'disable_existing_loggers': self.disable_existing_loggers,
-            'loggers': self.get_loggers(),
-            'handlers': self.get_handlers(),
-            'formatters': self.get_formatters()
+            'loggers': self.get_logger_definitions(),
+            'handlers': self.get_handler_definitions(),
+            'formatters': self.get_formatter_definitions()
         }

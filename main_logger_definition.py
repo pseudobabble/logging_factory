@@ -10,8 +10,8 @@ formatters = [
 ]
 
 handlers = [
-    Handler(name='stdout_handler', level='DEBUG', formatter='standard', formatter_class='logging.StreamHandler', stream='ext://sys.stdout'),
-    Handler(name='kaboom', level='CRITICAL', formatter='big-wow', formatter_class=RotatingFileHandler('/some/path/'))
+    Handler(name='stdout_handler', level='DEBUG', formatter='standard', handler_class='logging.StreamHandler', stream='ext://sys.stdout'),
+    Handler(name='kaboom', level='CRITICAL', formatter='big-wow', handler_class=RotatingFileHandler('/some/path/'))
 
 ]
 
@@ -31,7 +31,7 @@ class MainLoggingDefinitionInstance(LoggingDefinitionFactory):
         super().__init__(formatters, handlers, loggers)
 
     # Lets say we want to handle client config...
-    def get_loggers(self):
+    def get_logger_definitions(self):
         loggers = [logger for logger in self.loggers if logger.name not in self.custom_schema.loggers]
         for logger_name, logger_configuration in self.custom_schema.loggers:
             loggers.append(
@@ -39,7 +39,7 @@ class MainLoggingDefinitionInstance(LoggingDefinitionFactory):
             )
         self.loggers = loggers
 
-        return super().get_loggers()
+        return super().get_logger_definitions()
 
 
 
