@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from collections import namedtuple
 
 # Defaults are applied from the right
@@ -7,22 +7,41 @@ Handler = namedtuple('Handler', ['name', 'level', 'formatter', 'handler_class', 
 Formatter = namedtuple('Formatter', ['name', 'format'])
 
 
+class ConfigurationNotFound(Exception):
+    pass
+
+
 class LoggingDefinitionFactory:
 
     disable_existing_loggers = False
     version = 1
 
-    def __init__(self, formatters: List[Formatter],  handlers: List[Handler],  loggers: List[Logger]):
+    def __init__(
+            self,
+            formatters: Optional[List[Formatter]] = None,
+            handlers: Optional[List[Handler]] = None,
+            loggers: Optional[List[Logger]] = None
+    ):
         self.formatters = formatters
         self.handlers = handlers
         self.loggers = loggers
 
     def get_formatter_definitions(self):
+        if not self.formatters:
+            raise ConfigurationNotFound(
+                'A list of Formatters must be provided on instantiation to request the formatter definitions'
+        )
+
         return {
             "{}".format(name): {'format': format} for (name, format) in self.formatters
         }
 
     def get_handler_definitions(self):
+        if not self.handlers:
+            raise ConfigurationNotFound(
+                'A list of Handlers must be provided on instantiation to request the handler definitions'
+        )
+
         return {
             "{}".format(name): {
                 'level': level,
@@ -33,6 +52,11 @@ class LoggingDefinitionFactory:
         }
 
     def get_logger_definitions(self):
+        if not self.loggers:
+            raise ConfigurationNotFound(
+                'A list of Loggers must be provided on instantiation to request the logger definitions'
+        )
+
         return {
             "{}".format(name): {
                 'handlers': [handler.name for handler in handlers],
