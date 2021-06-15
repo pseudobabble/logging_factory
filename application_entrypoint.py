@@ -7,7 +7,7 @@ from validation_logger_definition import ValidationLoggingDefinition
 
 
 def set_up_logging():
-    if validate_settings:
+    if bool('Imagine I\'m a boolean variable obtained from somewhere'):
         logging.config.dictConfig(ValidationLoggingDefinition())
     else:
         logging.config.dictConfig(MainLoggingDefinition())

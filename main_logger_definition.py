@@ -21,12 +21,33 @@ loggers = [
     Logger(name='analysis', level='WARNING', propagate=True),
 ]
 
-class MainLoggingDefinition(LoggingDefinitionFactory):
+
+class MainLoggingDefinitionInstance(LoggingDefinitionFactory):
 
     disable_existing_loggers = True
 
-    def get_handlers(self, use_stdout: bool = False):
-        handlers = super().get_handlers()
-        del handlers['kaboom']
+    def __init__(self, formatters: List[Formatter], handlers: List[Handler], loggers: List[Logger], custom_logger_schema: 'SomeClientSchema'):
+        self.custom_schema = custom_logger_schema
+        super().__init__(formatters, handlers, loggers)
 
-        return handlers
+    # Lets say we want to handle client config...
+    def get_loggers(self):
+        loggers = [logger for logger in self.loggers if logger.name not in self.custom_schema.loggers]
+        for logger_name, logger_configuration in self.custom_schema.loggers:
+            loggers.append(
+                Logger(name=logger_name, level=logger_configuration['level'], propagate=logger_configuration['propagate'])
+            )
+        self.loggers = loggers
+
+        return super().get_loggers()
+
+
+
+# Imagine we got an instance of this this from somewhere
+class SomeClientSchema:
+    loggers = {'documents': {'level': 'DEBUG', 'propagate': False}}
+    log_to_console = False
+        
+
+
+MainLoggingDefinition = MainLoggingDefinitionInstance(formatters=formatters, handlers=handlers, loggers=loggers, custom_logger_schema=SomeClientSchema())

@@ -4,13 +4,14 @@ from collections import namedtuple
 
 # Defaults are applied from the right
 Logger = namedtuple('Logger', ['name', 'level', 'propagate', 'handlers'], defaults=[None])
-Handler = namedtuple('Handler', ['name', 'level', 'formatter', 'formatter_class', 'stream'], defaults=[None])
+Handler = namedtuple('Handler', ['name', 'level', 'formatter', 'handler_class', 'stream'], defaults=[None])
 Formatter = namedtuple('Formatter', ['name', 'format'])
 
 
 class LoggingDefinitionFactory:
 
     disable_existing_loggers = False
+    version = 1
 
     def __init__(self, formatters: List[Formatter],  handlers: List[Handler],  loggers: List[Logger]):
         self.formatters = formatters
@@ -27,9 +28,9 @@ class LoggingDefinitionFactory:
             "{name}".format(name): {
                 'level': level,
                 'formatter': formatter,
-                'class': formatter_class,
+                'class': handler_class,
                 'stream': stream
-            } for (name, level, formatter, formatter_class, stream) in self.handlers
+            } for (name, level, formatter, handler_class, stream) in self.handlers
         }
 
     def get_loggers(self):
@@ -43,7 +44,7 @@ class LoggingDefinitionFactory:
 
     def __call__(self):
         return {
-            'version': 1,
+            'version': self.version,
             'disable_existing_loggers': self.disable_existing_loggers,
             'loggers': self.get_loggers(),
             'handlers': self.get_handlers(),
