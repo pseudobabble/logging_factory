@@ -1,7 +1,7 @@
 
 import unittest
 
-from logger_factory import LoggingDefinitionFactory, Formatter, Handler, Logger
+from logger_facade import LoggingDefinitionFacade, Formatter, Handler, Logger
 
 class TestLoggerDefinitionFactory(unittest.TestCase):
 
@@ -10,7 +10,7 @@ class TestLoggerDefinitionFactory(unittest.TestCase):
         handler = Handler(name='test-handler', level='DEBUG', formatter='test_formatter', handler_class='logging.StreamHandler', stream='ext://sys.stdout')
         logger = Logger(name='test-logger', level='DEBUG', propagate=True, handlers=[handler])
 
-        TestLoggingDefinition = LoggingDefinitionFactory(formatters=[formatter], handlers=[handler], loggers=[logger])
+        TestLoggingDefinition = LoggingDefinitionFacade(formatters=[formatter], handlers=[handler], loggers=[logger])
 
         self.assertEqual(
             TestLoggingDefinition.get_formatter_definitions(),
@@ -23,7 +23,7 @@ class TestLoggerDefinitionFactory(unittest.TestCase):
         handler = Handler(name='test-handler', level='DEBUG', formatter='test_formatter', handler_class='logging.StreamHandler', stream='ext://sys.stdout')
         logger = Logger(name='test-logger', level='DEBUG', propagate=True, handlers=[handler])
 
-        TestLoggingDefinition = LoggingDefinitionFactory(formatters=[formatter], handlers=[handler], loggers=[logger])
+        TestLoggingDefinition = LoggingDefinitionFacade(formatters=[formatter], handlers=[handler], loggers=[logger])
 
         self.assertEqual(
             TestLoggingDefinition.get_handler_definitions(),
@@ -42,7 +42,7 @@ class TestLoggerDefinitionFactory(unittest.TestCase):
         handler = Handler(name='test-handler', level='DEBUG', formatter='test_formatter', handler_class='logging.StreamHandler', stream='ext://sys.stdout')
         logger = Logger(name='test-logger', level='DEBUG', propagate=True, handlers=[handler])
 
-        TestLoggingDefinition = LoggingDefinitionFactory(formatters=[formatter], handlers=[handler], loggers=[logger])
+        TestLoggingDefinition = LoggingDefinitionFacade(formatters=[formatter], handlers=[handler], loggers=[logger])
 
         self.assertEqual(
             TestLoggingDefinition.get_logger_definitions(),

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 from logging.handlers import RotatingFileHandler
+from tempfile import TemporaryDirectory
+from typing import List
 
-from logger_factory import Logger, Handler, Formatter, LoggingDefinitionFactory
+from logger_facade import Logger, Handler, Formatter, LoggingDefinitionFacade
 
 
 formatters = [
@@ -11,18 +13,18 @@ formatters = [
 
 handlers = [
     Handler(name='stdout_handler', level='DEBUG', formatter='standard', handler_class='logging.StreamHandler', stream='ext://sys.stdout'),
-    Handler(name='kaboom', level='CRITICAL', formatter='big-wow', handler_class=RotatingFileHandler('/some/path/'))
+    Handler(name='kaboom', level='CRITICAL', formatter='big-wow', handler_class=RotatingFileHandler(TemporaryDirectory().name))
 
 ]
 
 loggers = [
     Logger(name='', level='DEBUG', propagate=True, handlers=handlers),
-    Logger(name='documents', level='INFO', propagate=True),
-    Logger(name='analysis', level='WARNING', propagate=True),
+    Logger(name='documents', level='INFO', propagate=True, handlers = []),
+    Logger(name='analysis', level='WARNING', propagate=True, handlers=[])
 ]
 
 
-class MainLoggingDefinitionInstance(LoggingDefinitionFactory):
+class MainLoggingDefinitionFacade(LoggingDefinitionFacade):
 
     disable_existing_loggers = True
 
@@ -33,9 +35,9 @@ class MainLoggingDefinitionInstance(LoggingDefinitionFactory):
     # Lets say we want to handle client config...
     def get_logger_definitions(self):
         loggers = [logger for logger in self.loggers if logger.name not in self.custom_schema.loggers]
-        for logger_name, logger_configuration in self.custom_schema.loggers:
+        for logger_name, logger_configuration in self.custom_schema.loggers.items():
             loggers.append(
-                Logger(name=logger_name, level=logger_configuration['level'], propagate=logger_configuration['propagate'])
+                Logger(name=logger_name, level=logger_configuration['level'], propagate=logger_configuration['propagate'], handlers=[])
             )
         self.loggers = loggers
 
@@ -50,4 +52,4 @@ class SomeClientSchema:
         
 
 
-MainLoggingDefinition = MainLoggingDefinitionInstance(formatters=formatters, handlers=handlers, loggers=loggers, custom_logger_schema=SomeClientSchema())
+MainLoggingDefinition = MainLoggingDefinitionFacade(formatters=formatters, handlers=handlers, loggers=loggers, custom_logger_schema=SomeClientSchema())
