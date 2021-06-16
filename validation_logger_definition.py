@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from logger_facade import Logger, LoggingDefinitionFacade
+from logging_definition_facade import Logger, LoggingDefinitionFacade
 
 # We want to use the same formatters and handlers as the main logger
 from main_logger_definition import formatters, handlers

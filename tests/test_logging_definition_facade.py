@@ -1,7 +1,7 @@
 
 import unittest
 
-from logger_facade import LoggingDefinitionFacade, Formatter, Handler, Logger
+from logging_definition_facade import LoggingDefinitionFacade, Formatter, Handler, Logger
 
 class TestLoggerDefinitionFactory(unittest.TestCase):
 

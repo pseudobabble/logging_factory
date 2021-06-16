@@ -3,7 +3,7 @@ from logging.handlers import RotatingFileHandler
 from tempfile import TemporaryDirectory
 from typing import List
 
-from logger_facade import Logger, Handler, Formatter, LoggingDefinitionFacade
+from logging_definition_facade import Logger, Handler, Formatter, LoggingDefinitionFacade
 
 
 formatters = [
